@@ -89,15 +89,10 @@ Para iniciar el servidor de desarrollo:
 ```bash
 pnpm dev
 ```
-
-### Construcción para Producción
-
-Para generar una versión optimizada del proyecto:
-```bash
-pnpm build
-```
-
-Los archivos generados estarán en la carpeta `dist/`.
+---
+### **Usuarios**
+- `admin` (rol: `ADMIN`, contraseña: `admin123`).
+- `user` (rol: `USER`, contraseña: `user123`).
 
 ---
 
