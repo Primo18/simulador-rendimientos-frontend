@@ -16,7 +16,7 @@ const routes: RouteObject[] = [
             { path: 'simulate', element: <Simulate /> },
             {
                 path: 'admin',
-                element: <ProtectedRoute />, // Ruta protegida
+                element: <ProtectedRoute allowedRoles={['ADMIN']} />, // Ruta protegida
                 children: [{ index: true, element: <Admin /> }],
             },
             { path: 'login', element: <Login /> },

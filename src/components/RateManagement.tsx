@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useRates } from '../hooks/useRates'; // Nuevo hook que crearemos
 import { useBanks } from '../hooks/useBanks';
 import { rateService } from '../services/rateService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,41 +13,34 @@ type Rate = {
 
 export const RateManagement = () => {
     const { banks } = useBanks();
-    const [rates, setRates] = useState<Rate[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { rates, isLoading, error, refreshRates } = useRates();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingRate, setEditingRate] = useState<Rate | null>(null);
-
-    useEffect(() => {
-        const fetchRates = async () => {
-            setIsLoading(true);
-            try {
-                const data = await rateService.getRates();
-                setRates(data);
-            } catch (err) {
-                setError(`Error al cargar las tasas: ${err}`);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchRates();
-    }, []);
 
     const handleSave = async () => {
         if (!editingRate) return;
 
-        const { id, bankId, annualPercentage } = editingRate;
-
-        if (id) {
-            await rateService.updateRate(id, { annualPercentage });
-        } else {
-            await rateService.createRate({ bankId, annualPercentage });
+        try {
+            const { id, bankId, annualPercentage } = editingRate;
+            if (id) {
+                await rateService.updateRate(id, { annualPercentage });
+            } else {
+                await rateService.createRate({ bankId, annualPercentage });
+            }
+            setIsModalOpen(false);
+            refreshRates();
+        } catch (err) {
+            console.error('Error al guardar:', err);
         }
+    };
 
-        setIsModalOpen(false);
-        window.location.reload();
+    const handleDelete = async (rateId: number) => {
+        try {
+            await rateService.deleteRate(rateId);
+            refreshRates();
+        } catch (err) {
+            console.error('Error al eliminar:', err);
+        }
     };
 
     const getBankName = (bankId: number) => {
@@ -101,10 +95,7 @@ export const RateManagement = () => {
                                             Editar
                                         </button>
                                         <button
-                                            onClick={async () => {
-                                                await rateService.deleteRate(rate.id!);
-                                                window.location.reload();
-                                            }}
+                                            onClick={() => handleDelete(rate.id!)}
                                             className="text-red-600 hover:text-red-900 flex items-center"
                                         >
                                             <FontAwesomeIcon icon={['fas', 'trash']} className="mr-1" />

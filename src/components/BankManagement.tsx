@@ -5,29 +5,33 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Modal } from './Modal';
 
 export const BankManagement = () => {
-    const { banks, isLoading, error } = useBanks();
+    const { banks, isLoading, error, refreshBanks } = useBanks();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingBank, setEditingBank] = useState<{ id?: number; name: string; address: string; contact: string } | null>(null);
 
     const handleSave = async () => {
         if (!editingBank) return;
 
-        if (editingBank.id) {
-            await bankService.updateBank(editingBank.id, {
-                name: editingBank.name,
-                address: editingBank.address,
-                contact: editingBank.contact,
-            });
-        } else {
-            await bankService.createBank({
-                name: editingBank.name,
-                address: editingBank.address,
-                contact: editingBank.contact,
-            });
+        try {
+            if (editingBank.id) {
+                await bankService.updateBank(editingBank.id, editingBank);
+            } else {
+                await bankService.createBank(editingBank);
+            }
+            setIsModalOpen(false);
+            refreshBanks();
+        } catch (err) {
+            console.error('Error al guardar:', err);
         }
+    };
 
-        setIsModalOpen(false);
-        window.location.reload();
+    const handleDelete = async (bankId: number) => {
+        try {
+            await bankService.deleteBank(bankId);
+            refreshBanks();
+        } catch (err) {
+            console.error('Error al eliminar:', err);
+        }
     };
 
     return (
@@ -79,10 +83,7 @@ export const BankManagement = () => {
                                             Editar
                                         </button>
                                         <button
-                                            onClick={async () => {
-                                                await bankService.deleteBank(bank.id);
-                                                window.location.reload();
-                                            }}
+                                            onClick={() => handleDelete(bank.id)}
                                             className="text-red-600 hover:text-red-900 flex items-center"
                                         >
                                             <FontAwesomeIcon icon={['fas', 'trash']} className="mr-1" />

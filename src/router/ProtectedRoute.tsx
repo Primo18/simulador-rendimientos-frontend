@@ -1,13 +1,26 @@
 import { Navigate, Outlet } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
 
-export const ProtectedRoute = () => {
-    const { isAuthenticated } = useAuth();
+type Role = 'ADMIN' | 'USER'; // Define roles específicos
 
-    if (isAuthenticated === null) {
-        // Mostrar un indicador de carga mientras se verifica el estado de autenticación
-        return <div>Cargando...</div>;
+interface ProtectedRouteProps {
+    allowedRoles: Role[];
+    redirectPath?: string;
+}
+
+export const ProtectedRoute = ({
+    allowedRoles,
+    redirectPath = '/login'
+}: ProtectedRouteProps) => {
+    const { isAuthenticated, role } = useAuth();
+
+    if (!isAuthenticated) {
+        return <Navigate to={redirectPath} replace />;
     }
 
-    return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+    if (!role || !allowedRoles.includes(role as Role)) {
+        return <Navigate to="/" replace />;
+    }
+
+    return <Outlet />;
 };

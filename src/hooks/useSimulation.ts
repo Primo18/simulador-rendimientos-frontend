@@ -12,7 +12,7 @@ export const useSimulation = () => {
         setError(null);
 
         try {
-            const response: SimulationResult = await simulationService.simulateSavings(params);
+            const response = await simulationService.simulateSavings(params);
             setResult(response);
         } catch (err) {
             setError(`Error al simular: ${err}`);
@@ -21,5 +21,10 @@ export const useSimulation = () => {
         }
     };
 
-    return { result, error, isLoading, simulate };
+    const resetSimulation = () => {
+        setResult(null);
+        setError(null);
+    };
+
+    return { result, error, isLoading, simulate, resetSimulation };
 };
