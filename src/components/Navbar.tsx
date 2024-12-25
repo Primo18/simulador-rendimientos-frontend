@@ -1,16 +1,19 @@
 import { NavLink } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useLogout } from '../hooks/useLogout';
+import { useAuth } from '../hooks/useAuth';
 
 export const Navbar = () => {
-    const token = localStorage.getItem('token'); // Verifica si el usuario está autenticado
-    const { logout } = useLogout(); // Hook para cerrar sesión
+    const { isAuthenticated, role } = useAuth();
+    const { logout } = useLogout();
 
     const linkClass = ({ isActive }: { isActive: boolean }) =>
         isActive ? 'text-blue-400 font-bold' : 'text-gray-300 hover:text-white transition';
 
+    const showAdminLink = isAuthenticated && role === 'ADMIN';
+
     return (
-        <div className="navbar bg-gray-900 text-white shadow-lg">
+        <nav className="navbar bg-gray-900 text-white shadow-lg">
             <div className="container mx-auto flex justify-between items-center p-4">
                 {/* Logo */}
                 <NavLink to="/" className="btn btn-ghost normal-case text-2xl text-blue-500">
@@ -32,18 +35,20 @@ export const Navbar = () => {
                             Simular
                         </NavLink>
                     </li>
-                    {token ? (
+                    {isAuthenticated ? (
                         <>
-                            <li>
-                                <NavLink to="/admin" className={linkClass}>
-                                    <FontAwesomeIcon icon={['fas', 'user-shield']} className="mr-2" />
-                                    Administrador
-                                </NavLink>
-                            </li>
+                            {showAdminLink && (
+                                <li>
+                                    <NavLink to="/admin" className={linkClass}>
+                                        <FontAwesomeIcon icon={['fas', 'user-shield']} className="mr-2" />
+                                        Administrador
+                                    </NavLink>
+                                </li>
+                            )}
                             <li>
                                 <button
                                     onClick={logout}
-                                    className={linkClass({ isActive: false })}
+                                    className="text-gray-300 hover:text-white transition flex items-center"
                                 >
                                     <FontAwesomeIcon icon={['fas', 'sign-out-alt']} className="mr-2" />
                                     Cerrar Sesión
@@ -51,16 +56,24 @@ export const Navbar = () => {
                             </li>
                         </>
                     ) : (
-                        <li>
-                            <NavLink to="/login" className={linkClass}>
-                                <FontAwesomeIcon icon={['fas', 'sign-in-alt']} className="mr-2" />
-                                Iniciar Sesión
-                            </NavLink>
-                        </li>
+                        <>
+                            <li>
+                                <NavLink to="/login" className={linkClass}>
+                                    <FontAwesomeIcon icon={['fas', 'sign-in-alt']} className="mr-2" />
+                                    Iniciar Sesión
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/register" className={linkClass}>
+                                    <FontAwesomeIcon icon={['fas', 'user-plus']} className="mr-2" />
+                                    Registrarse
+                                </NavLink>
+                            </li>
+                        </>
                     )}
                 </ul>
 
-                {/* Menú hamburguesa en pantallas pequeñas */}
+                {/* Menú hamburguesa para pantallas pequeñas */}
                 <div className="dropdown dropdown-end md:hidden">
                     <label tabIndex={0} className="btn btn-ghost">
                         <FontAwesomeIcon icon={['fas', 'bars']} className="h-6 w-6" />
@@ -81,18 +94,20 @@ export const Navbar = () => {
                                 Simular
                             </NavLink>
                         </li>
-                        {token ? (
+                        {isAuthenticated ? (
                             <>
-                                <li>
-                                    <NavLink to="/admin" className={linkClass}>
-                                        <FontAwesomeIcon icon={['fas', 'user-shield']} className="mr-2" />
-                                        Administrador
-                                    </NavLink>
-                                </li>
+                                {showAdminLink && (
+                                    <li>
+                                        <NavLink to="/admin" className={linkClass}>
+                                            <FontAwesomeIcon icon={['fas', 'user-shield']} className="mr-2" />
+                                            Administrador
+                                        </NavLink>
+                                    </li>
+                                )}
                                 <li>
                                     <button
                                         onClick={logout}
-                                        className="btn btn-error text-white hover:bg-red-600 transition"
+                                        className="text-gray-300 hover:text-white transition flex items-center"
                                     >
                                         <FontAwesomeIcon icon={['fas', 'sign-out-alt']} className="mr-2" />
                                         Cerrar Sesión
@@ -100,16 +115,24 @@ export const Navbar = () => {
                                 </li>
                             </>
                         ) : (
-                            <li>
-                                <NavLink to="/login" className={linkClass}>
-                                    <FontAwesomeIcon icon={['fas', 'sign-in-alt']} className="mr-2" />
-                                    Iniciar Sesión
-                                </NavLink>
-                            </li>
+                            <>
+                                <li>
+                                    <NavLink to="/login" className={linkClass}>
+                                        <FontAwesomeIcon icon={['fas', 'sign-in-alt']} className="mr-2" />
+                                        Iniciar Sesión
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/register" className={linkClass}>
+                                        <FontAwesomeIcon icon={['fas', 'user-plus']} className="mr-2" />
+                                        Registrarse
+                                    </NavLink>
+                                </li>
+                            </>
                         )}
                     </ul>
                 </div>
             </div>
-        </div>
+        </nav>
     );
 };

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRates } from '../hooks/useRates'; // Nuevo hook que crearemos
+import { useRates } from '../hooks/useRates';
 import { useBanks } from '../hooks/useBanks';
 import { rateService } from '../services/rateService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,11 +21,11 @@ export const RateManagement = () => {
         if (!editingRate) return;
 
         try {
-            const { id, bankId, annualPercentage } = editingRate;
+            const { id, annualPercentage } = editingRate;
             if (id) {
                 await rateService.updateRate(id, { annualPercentage });
             } else {
-                await rateService.createRate({ bankId, annualPercentage });
+                await rateService.createRate(editingRate);
             }
             setIsModalOpen(false);
             refreshRates();
@@ -118,19 +118,9 @@ export const RateManagement = () => {
                     <form className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Banco</label>
-                            <select
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
-                                value={editingRate?.bankId || ''}
-                                onChange={(e) =>
-                                    setEditingRate({ ...editingRate!, bankId: Number(e.target.value) })
-                                }
-                            >
-                                {banks.map((bank) => (
-                                    <option key={bank.id} value={bank.id}>
-                                        {bank.name}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-800">
+                                {editingRate ? getBankName(editingRate.bankId) : 'Banco desconocido'}
+                            </div>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Tasa Anual (%)</label>

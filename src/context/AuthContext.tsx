@@ -7,5 +7,4 @@ export interface AuthContextProps {
     logout: () => void;
 }
 
-// Crear el contexto
 export const AuthContext = createContext<AuthContextProps | undefined>(undefined);

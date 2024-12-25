@@ -6,7 +6,7 @@ export const useLogout = () => {
     const { logout: authLogout } = useAuth();
 
     const logout = () => {
-        authLogout(); // Usa el logout del contexto
+        authLogout();
         navigate('/login');
     };
 

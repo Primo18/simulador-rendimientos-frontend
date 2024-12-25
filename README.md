@@ -1,50 +1,144 @@
-# React + TypeScript + Vite
+# Simulador de Rendimientos y Panel de Administración - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción
 
-Currently, two official plugins are available:
+Este proyecto es la interfaz del usuario para un sistema que permite simular rendimientos financieros y administrar bancos y tasas de interés. El frontend está diseñado para interactuar con el backend mediante API RESTful y ofrece una experiencia responsiva tanto para dispositivos móviles como para escritorio.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Incluye:
+- **Simulación de Rendimientos**: Permite a los usuarios calcular el rendimiento esperado seleccionando un banco, monto y plazo.
+- **Panel de Administración**: Exclusivo para usuarios con rol de administrador, permite gestionar bancos, tasas de interés y visualizar los logs de cambios.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Tecnologías Utilizadas
 
-- Configure the top-level `parserOptions` property like this:
+- **Framework Principal**: React 19 con TypeScript
+- **Herramienta de Construcción**: Vite
+- **Estilización**: 
+  - TailwindCSS v4
+  - DaisyUI
+  - FontAwesome para iconos
+- **Gestión del Estado Global**: Context API
+- **Autenticación**: JWT
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+---
+
+## Características
+
+### Usuario
+- **Simulación de Rendimientos**:
+  - Seleccionar banco, monto y plazo para calcular el rendimiento esperado.
+
+### Administrador
+- **Gestión de Bancos**:
+  - Crear, editar y eliminar bancos.
+- **Gestión de Tasas de Interés**:
+  - Administrar tasas de interés asociadas a los bancos.
+- **Logs de Cambios**:
+  - Visualizar un historial de acciones realizadas, incluyendo usuario, acción, datos anteriores y nuevos.
+
+### Autenticación
+- Inicio y cierre de sesión con JWT.
+- Roles (ADMIN/USER) para gestionar el acceso a vistas protegidas.
+
+---
+
+## Capturas de Pantalla
+
+### Simulación de Rendimientos
+![Simulación](./screenshots/simulacion.jpeg)
+
+### Panel de Administración
+![Administración](./screenshots/panel_bancos.jpeg)
+![Administración](./screenshots/panel_rates.jpeg)
+### Logs de Cambios
+![Logs](./screenshots/panel_logs.jpeg)
+
+---
+
+## Instalación y Configuración
+
+### Prerrequisitos
+
+- Node.js >= 22.x
+- Gestor de paquetes: `pnpm` (recomendado)
+
+### Configuración del Entorno
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/Primo18/simulador-rendimientos-frontend.git
+   cd simulador-rendimientos-frontend
+   ```
+
+2. Crea un archivo `.env` en la raíz del proyecto con la siguiente configuración:
+   ```env
+   VITE_BACKEND_URL=http://localhost:3000/api
+   ```
+
+### Instalación de Dependencias
+
+Ejecuta el siguiente comando para instalar las dependencias necesarias:
+```bash
+pnpm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Ejecución del Proyecto
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+Para iniciar el servidor de desarrollo:
+```bash
+pnpm dev
 ```
+
+### Construcción para Producción
+
+Para generar una versión optimizada del proyecto:
+```bash
+pnpm build
+```
+
+Los archivos generados estarán en la carpeta `dist/`.
+
+---
+
+## Estructura del Proyecto
+
+```plaintext
+src/
+  components/           # Componentes reutilizables
+  context/              # Contextos globales
+  hooks/                # Hooks personalizados
+  pages/                # Vistas principales
+    Admin.tsx           # Panel de administración
+    Home.tsx            # Página de inicio
+    Login.tsx           # Página de inicio de sesión
+    Register.tsx        # Página de registro
+    Simulate.tsx        # Página de simulación
+  services/             # Servicios de interacción con la API
+  App.tsx               # Componente raíz
+  main.tsx              # Punto de entrada principal
+```
+
+---
+
+## Endpoints Consumidos
+
+### Autenticación
+- **POST** `/users/login`: Iniciar sesión
+- **POST** `/users/register`: Registrar usuario
+
+### Bancos
+- **GET** `/banks`: Listar bancos
+- **POST** `/banks`: Crear banco
+- **PUT** `/banks/:id`: Editar banco
+- **DELETE** `/banks/:id`: Eliminar banco
+
+### Tasas de Interés
+- **GET** `/rates`: Listar tasas
+- **POST** `/rates`: Crear tasa
+- **PUT** `/rates/:id`: Editar tasa
+- **DELETE** `/rates/:id`: Eliminar tasa
+
+### Logs
+- **GET** `/logs`: Listar logs de acciones
+
